@@ -1,3 +1,5 @@
-from django.shortcuts import render
+from .utils import get_report
 
-# Create your views here.
+
+def get_report(request):
+    return None
