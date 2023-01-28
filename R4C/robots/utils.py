@@ -1,6 +1,10 @@
+import os
 from datetime import timedelta
+from tempfile import TemporaryDirectory
 
 from django.conf import settings
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.db.models import Count
 from django.utils import timezone
 from openpyxl import Workbook
@@ -21,7 +25,7 @@ def get_last_robots(days_count=settings.EXCEL_REPORT_DAYS_COUNT):
                         .annotate(robots_count=Count("robots")))
 
 
-def get_report():
+def get_report_workbook():
     queryset = get_last_robots()
     models = set(queryset.values_list("model__model", flat=True).all())
     wb = Workbook()
@@ -34,8 +38,9 @@ def get_report():
         versions = queryset.filter(model__model=model)
         for version in versions:
             ws.append([model, version["version"], version["robots_count"]])
-    report_date = timezone.now()
-    report_date = report_date.strftime("%Y_%m_%d")
-    path_to_wb = settings.STATIC_ROOT / 'docs' / f"report_{report_date}.xlsx"
-    wb.save(path_to_wb)
-    return path_to_wb
+    return wb
+
+
+def get_workbook_name():
+    report_date = timezone.now().strftime("%Y_%m_%d")
+    return f"report_{report_date}.xlsx"
