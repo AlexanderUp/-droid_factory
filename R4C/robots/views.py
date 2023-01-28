@@ -1,12 +1,12 @@
-from django.http import HttpResponse
+import os
 
-from .utils import get_report_workbook, get_workbook_name
+from django.conf import settings
+from django.http import FileResponse
+
+from .utils import get_report
 
 
 def download_workbook(request):
-    wb = get_report_workbook()
-    wb_name = get_workbook_name()
-    return HttpResponse(wb, headers={
-        "Content-Type": "application/vnd.ms-excel",
-        "Content-Disposition": f"attachment; filename={wb_name}",
-    })
+    rel_path_to_report = get_report()
+    path_to_report = os.path.join(settings.MEDIA_ROOT, rel_path_to_report)
+    return FileResponse(open(path_to_report, "rb"))

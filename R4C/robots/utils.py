@@ -1,6 +1,10 @@
+import os
 from datetime import timedelta
+from tempfile import TemporaryDirectory
 
 from django.conf import settings
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.db.models import Count
 from django.utils import timezone
 from openpyxl import Workbook
@@ -40,3 +44,19 @@ def get_report_workbook():
 def get_workbook_name():
     report_date = timezone.now().strftime("%Y_%m_%d")
     return f"report_{report_date}.xlsx"
+
+
+def get_report():
+    wb = get_report_workbook()
+    wb_name = get_workbook_name()
+    with TemporaryDirectory() as tempdir:
+        path_to_wb = os.path.join(tempdir, wb_name)
+        wb.save(path_to_wb)
+
+        with open(path_to_wb, "br") as report:
+            report_content = report.read()
+            content_file = ContentFile(report_content)
+            path_to_report = default_storage.save(
+                settings.MEDIA_ROOT / "docs" / wb_name, content_file
+            )
+    return path_to_report

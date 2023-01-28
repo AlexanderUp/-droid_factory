@@ -155,6 +155,3 @@ media/
 requirements_dev.txt
 TECHNICAL_TASK.md
 settings_local.py
-
-# excel files
-*.xlsx
