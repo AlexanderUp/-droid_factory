@@ -1,30 +1,37 @@
-from django.conf import settings
-from django.core.mail import send_mail
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from robots.models import Robot  # isort:skip
+from .models import Order  # isort:skip
+from .utils import (send_mail_robot_assigned,  # isort:skip
+                    send_mail_robot_available,  # isort:skip
+                    send_mail_robot_unavailable)  # isort:skip
 
 
-ROBOT_AVAILABLE_MESSAGE_TEMPLATE = """
-Добрый день!
-Недавно вы интересовались нашим роботом модели {model}, версии {version}.
-Этот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами.
-"""
-
-
-@receiver(post_save, sender=Robot)
+@receiver(post_save, sender=Robot, dispatch_uid="robot_available_mail")
 def robot_available_mail(sender, instance, created, **kwargs):
     if created:
-        subject = "Order status notification"
-        model = instance.version.model.model
-        version = instance.version.version
-        message = ROBOT_AVAILABLE_MESSAGE_TEMPLATE.format(
-            model=model, version=version)
-        recipients = ["example@example.com",]
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.ADMIN_EMAIL,
-            recipient_list=recipients,
+        query = Order.objects.filter(
+            robot_version=instance.version,
+            robot_assigned__isnull=True,
         )
+        if query.exists():
+            recipients = set(query.values_list("customer__email", flat=True))
+            send_mail_robot_available(instance, recipients)  # type:ignore
+
+
+@receiver(post_save, sender=Order, dispatch_uid="order_done_mail")
+def order_done_mail(sender, instance, created, **kwargs):
+    if created:
+        if instance.robot_assigned is None:
+            query = instance.robot_version.robots.filter(
+                order__isnull=True
+            )
+            if not query.exists():
+                send_mail_robot_unavailable(instance)
+                return None  # noqa
+            robot = query.order_by("created")[0]
+            instance.robot_assigned = robot
+            instance.save()
+        send_mail_robot_assigned(instance)
+    return None  # noqa

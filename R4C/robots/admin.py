@@ -32,11 +32,14 @@ class RobotAdmin(admin.ModelAdmin):
         "serial",
         "robot_model",
         "created",
+        "order",
     )
     list_select_related = (
         "version",
         "version__model",
+        "order",
     )
+    empty_value_display = "-----"
 
     @admin.display(description="robot_model")
     def robot_model(self, obj):

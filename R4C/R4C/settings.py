@@ -142,4 +142,4 @@ LOGGING = {
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-ADMIN_EMAIL = "admin@example.com"
+ADMIN_EMAIL = "admin@django.com"
