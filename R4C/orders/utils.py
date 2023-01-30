@@ -1,37 +1,26 @@
 from django.conf import settings
 from django.core.mail import send_mail
-from robots.models import Robot
+from django.template import Context, Engine
 
-from .models import Order
+from robots.models import Robot  # isort:skip
+from .models import Order  # isort:skip
 
-ROBOT_ASSIGNED_MESSAGE_TEMPLATE = """
-Добрый день!
-Поздравляем! Вы успешно заказали робота модели {model}, версии {version}.
-"""
 
-ROBOT_AVAILABLE_MESSAGE_TEMPLATE = """
-Добрый день!
-Недавно вы интересовались нашим роботом модели {model}, версии {version}.
-Этот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами.
-"""
-
-ROBOT_UNAVAILABLE_MESSAGE_TEMPLATE = """
-Добрый день!
-Недавно вы интересовались нашим роботом модели {model}, версии {version}.
-К сожалению, такого робота в наличии.
-Как только он появится в продаже, мы сразу известим вас!
-"""
+engine = Engine.get_default()
 
 
 def send_mail_to_customer(instance: Order,
                           subject: str,
-                          template: str) -> None:
+                          template_name: str,
+                          engine: Engine = engine) -> None:
+    template = engine.get_template(template_name=template_name)
+    context = Context({
+        "model": instance.robot_version.model.model,
+        "version": instance.robot_version.version,
+    })
     send_mail(
         subject=subject,
-        message=template.format(
-            model=instance.robot_version.model.model,
-            version=instance.robot_version.version,
-        ),
+        message=template.render(context),
         from_email=settings.ADMIN_EMAIL,
         recipient_list=[instance.customer.email],
     )
@@ -39,25 +28,27 @@ def send_mail_to_customer(instance: Order,
 
 def send_mail_robot_assigned(instance: Order) -> None:
     subject = "DROID FACTORY: Robot assined to your order!"
-    template = ROBOT_ASSIGNED_MESSAGE_TEMPLATE
+    template = "mail/robot_assigned.txt"
     send_mail_to_customer(instance, subject, template)
 
 
 def send_mail_robot_unavailable(instance: Order) -> None:
     subject = "DROID FACTORY: Robot unavailable."
-    template = ROBOT_UNAVAILABLE_MESSAGE_TEMPLATE
+    template = "mail/robot_unavailable.txt"
     send_mail_to_customer(instance, subject, template)
 
 
 def send_mail_robot_available(robot: Robot, recipients: list[str]) -> None:
     subject = "DROID FACTORY: Robot available."
-    template = ROBOT_AVAILABLE_MESSAGE_TEMPLATE
+    template = engine.get_template(
+        template_name="mail/robot_available.txt")
+    context = Context({
+        "model": robot.version.model.model,
+        "version": robot.version.version,
+    })
     send_mail(
         subject=subject,
-        message=template.format(
-            model=robot.version.model.model,
-            version=robot.version.version,
-        ),
+        message=template.render(context),
         from_email=settings.ADMIN_EMAIL,
         recipient_list=recipients,
     )
