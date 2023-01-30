@@ -32,6 +32,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "debug_toolbar",
     "robots.apps.RobotsConfig",
+    "customers.apps.CustomersConfig",
+    "orders.apps.OrdersConfig",
 ]
 
 MIDDLEWARE = [
@@ -137,3 +139,7 @@ LOGGING = {
         }
     }
 }
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+ADMIN_EMAIL = "admin@example.com"
