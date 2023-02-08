@@ -4,7 +4,8 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('robots/', include("robots.urls", namespace="robots"))
+    path("api/", include("api.urls")),
+    path('robots/', include("robots.urls", namespace="robots")),
 ]
 
 if settings.DEBUG:
