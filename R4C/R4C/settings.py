@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     "robots.apps.RobotsConfig",
     "api.apps.ApiConfig",
     "rest_framework",
+    "customers.apps.CustomersConfig",
+    "orders.apps.OrdersConfig",
 ]
 
 MIDDLEWARE = [
@@ -56,7 +58,7 @@ ROOT_URLCONF = "R4C.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -148,3 +150,7 @@ LOGGING = {
 
 # Project related settings
 EXCEL_REPORT_DAYS_COUNT = 7
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+ADMIN_EMAIL = "admin@django.com"

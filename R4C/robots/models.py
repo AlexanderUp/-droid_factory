@@ -66,7 +66,7 @@ class Robot(models.Model):
         ordering = ("-pk",)
 
     def __str__(self):
-        return f"{self.version}"
+        return f"{self.version} (serial #{self.serial})"
 
     @property
     def serial(self):
