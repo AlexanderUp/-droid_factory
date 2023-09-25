@@ -1,12 +1,12 @@
 from django.contrib import admin
 
-from .models import Customer
+from customers.models import Customer
 
 
 class CustomerAdmin(admin.ModelAdmin):
     list_display = (
-        "pk",
-        "email",
+        'pk',
+        'email',
     )
 
 
