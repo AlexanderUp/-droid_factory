@@ -1,20 +1,21 @@
 from django.contrib import admin
 
-from .models import Order
+from orders.models import Order
 
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
-        "pk",
-        "customer",
-        "robot_version",
-        "robot_assigned",
+        'pk',
+        'customer',
+        'robot_version',
+        'robot_assigned',
     )
-    empty_value_display = "-----"
+    empty_value_display = '---empty---'
     fieldsets = (
         (
-            None, {
-                "fields": ("customer", "robot_version",),
+            None,
+            {
+                'fields': ('customer', 'robot_version'),
             },
         ),
     )
