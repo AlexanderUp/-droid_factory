@@ -35,7 +35,8 @@ def get_report_workbook():
     )
     wb = Workbook()
     ws = wb.active
-    wb.remove_sheet(ws)
+    if models:
+        wb.remove_sheet(ws)
     sheet_header = ['Model', 'Version', 'Weekly count']
     for model in models:
         ws = wb.create_sheet(title=model)
@@ -72,7 +73,7 @@ def get_report():
 
 def cleanup_file_dir(directory, file_name_pattern):
     for file_obj in os.listdir(directory):
-        path_to_file = os.path.join(dir, file_obj)
+        path_to_file = os.path.join(directory, file_obj)
         if os.path.isfile(path_to_file):
             if fnmatch(file_obj, file_name_pattern):
                 default_storage.delete(path_to_file)

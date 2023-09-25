@@ -10,5 +10,4 @@ def download_workbook(request):
     cleanup_file_dir(dir_to_cleanup, report_file_pattern)
     rel_path_to_report = get_report()
     path_to_report = settings.MEDIA_ROOT / rel_path_to_report
-    with open(path_to_report, 'rb') as response_file:
-        return FileResponse(response_file)
+    return FileResponse(open(path_to_report, 'rb'))

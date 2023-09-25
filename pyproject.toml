@@ -6,14 +6,15 @@ line-length=89
 [tool.flake8]
 ignore=['WPS100', 'WPS226', 'WPS305', 'WPS317', 'WPS348', 'W503', 'D100', 'D101', 'D102', 'D103', 'D104', 'D105', 'D106']
 per-file-ignores = [
-    'serializers.py:WPS110',
-    'settings.py:WPS407',
-    'models.py:WPS306',
-    'apps.py:F401,WPS301,WPS433',
-    'urls.py:WPS433',
     '*/commands/*.py:WPS110,WPS436',
     'admin.py:WPS110',
+    'apps.py:F401,WPS301,WPS433',
+    'models.py:WPS306',
     'R4C/robots/utils.py:WPS210',
+    'R4C/robots/views.py:WPS515',
+    'serializers.py:WPS110',
+    'settings.py:WPS407',
+    'urls.py:WPS433',
 ]
 exclude=['*/migrations/*.py', 'manage.py']
 max-cognitive-complexity=10
