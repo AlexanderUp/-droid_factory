@@ -5,7 +5,9 @@
 В ветке master находится полная и актуальная версия кода со всем реализованным функционалом.
 
 ПР по api - https://github.com/AlexanderUp/droid_factory/pull/3
+
 ПР по еженедельным отчетам - https://github.com/AlexanderUp/droid_factory/pull/5
+
 ПР по извещению пользователей по почте - https://github.com/AlexanderUp/droid_factory/pull/6
 
 
